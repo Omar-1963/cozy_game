@@ -4,1064 +4,165 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌸 Cozy Town</title>
+
 <style>
-  /* ─────────────────────────────────────────
-     ROOT & RESET
-  ───────────────────────────────────────── */
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+body {
+  margin:0;
+  background:#1a1208;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-family:sans-serif;
+}
 
-  :root {
-    --grass:   #b8d98d;
-    --grass2:  #a8cc7c;
-    --path:    #e8d8b8;
-    --path2:   #ddc8a4;
-    --sky:     #fef3e2;
-    --warm:    #f5a623;
-    --soft:    #f9c7a8;
-    --muted:   #8c7b6e;
-    --dialogue-bg: rgba(255,248,240,0.97);
-    --dialogue-border: #e4b88a;
-    --shadow: rgba(100,80,60,0.18);
-  }
+#game-wrap {
+  position:relative;
+  width:100%;
+  max-width:800px;
+  aspect-ratio: 800/560;
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+canvas {
+  width:100%;
+  height:100%;
+  display:block;
+  background:#b6d888;
+}
 
-  body {
-    background: #1a1208;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    font-family: 'Nunito', sans-serif;
-    overflow: hidden;
-  }
+#vibe {
+  position:absolute;
+  bottom:12px;
+  left:12px;
+  background:#fff;
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:12px;
+}
 
-  /* ─────────────────────────────────────────
-     GAME CANVAS WRAPPER
-  ───────────────────────────────────────── */
-  #game-wrap {
-    position: relative;
-    width: 800px;
-    height: 560px;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 8px 48px rgba(0,0,0,0.55), 0 0 0 3px #c8a870;
-  }
+/* Mobile controls */
+#mobile-controls {
+  position:absolute;
+  bottom:20px;
+  right:20px;
+  display:none;
+}
 
-  /* ─────────────────────────────────────────
-     GAME CANVAS
-  ───────────────────────────────────────── */
-  #game-canvas {
-    display: block;
-    image-rendering: pixelated;
-  }
+#mobile-controls button {
+  font-size:20px;
+  padding:10px;
+  margin:3px;
+  border:none;
+  border-radius:10px;
+  background:rgba(255,255,255,0.8);
+}
 
-  /* ─────────────────────────────────────────
-     INTRO OVERLAY
-  ───────────────────────────────────────── */
-  #intro {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(160deg, #fdf0d5 0%, #fce4be 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 18px;
-    z-index: 20;
-    transition: opacity 0.7s ease;
+@media (max-width: 900px) {
+  #mobile-controls {
+    display:block;
   }
-  #intro.hidden { opacity: 0; pointer-events: none; }
-
-  #intro h1 {
-    font-size: 2.6rem;
-    font-weight: 800;
-    color: #7a5c38;
-    letter-spacing: -0.5px;
-    text-shadow: 0 2px 0 #f5c98a;
-  }
-  #intro p {
-    font-size: 1.05rem;
-    color: #9a7a58;
-    text-align: center;
-    line-height: 1.7;
-    max-width: 380px;
-  }
-  #intro .hint {
-    background: #fff8ee;
-    border: 1.5px solid #e8c88a;
-    border-radius: 12px;
-    padding: 12px 22px;
-    font-size: 0.93rem;
-    color: #8c6a44;
-    text-align: center;
-    line-height: 1.65;
-  }
-  #intro button {
-    margin-top: 6px;
-    background: linear-gradient(135deg, #f5a84a, #e8853a);
-    color: #fff;
-    border: none;
-    border-radius: 30px;
-    padding: 13px 38px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(230,120,50,0.35);
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-  #intro button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 22px rgba(230,120,50,0.45);
-  }
-  #intro .deco { font-size: 2.2rem; letter-spacing: 8px; }
-
-  /* ─────────────────────────────────────────
-     DIALOGUE BOX
-  ───────────────────────────────────────── */
-  #dialogue {
-    position: absolute;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%) translateY(12px);
-    width: 560px;
-    background: var(--dialogue-bg);
-    border: 2px solid var(--dialogue-border);
-    border-radius: 16px;
-    padding: 16px 24px;
-    box-shadow: 0 6px 28px var(--shadow);
-    z-index: 15;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
-  }
-  #dialogue.visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
-  }
-  #dialogue .speaker {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #c4854a;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    margin-bottom: 5px;
-  }
-  #dialogue .text {
-    font-size: 1.02rem;
-    color: #5a4030;
-    line-height: 1.55;
-  }
-  #dialogue .dismiss {
-    font-size: 0.75rem;
-    color: #b89070;
-    margin-top: 8px;
-    text-align: right;
-  }
-
-  /* ─────────────────────────────────────────
-     INTERACT PROMPT
-  ───────────────────────────────────────── */
-  #prompt {
-    position: absolute;
-    background: rgba(255,248,235,0.92);
-    border: 1.5px solid #deb87a;
-    border-radius: 8px;
-    padding: 4px 10px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #7a5830;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s;
-    z-index: 12;
-    white-space: nowrap;
-  }
-  #prompt.visible { opacity: 1; }
-
-  /* ─────────────────────────────────────────
-     AMBIENT PARTICLES (CSS only)
-  ───────────────────────────────────────── */
-  .petal {
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    border-radius: 50% 0 50% 0;
-    background: #f9c7d8;
-    opacity: 0;
-    pointer-events: none;
-    animation: petalFall linear infinite;
-    z-index: 10;
-  }
-  @keyframes petalFall {
-    0%   { opacity:0; transform: translateY(-10px) rotate(0deg); }
-    10%  { opacity:0.7; }
-    90%  { opacity:0.4; }
-    100% { opacity:0; transform: translateY(570px) rotate(360deg) translateX(40px); }
-  }
-
-  /* ─────────────────────────────────────────
-     CORNER CLOCK / VIBE
-  ───────────────────────────────────────── */
-  #vibe {
-    position: absolute;
-    bottom: 12px;
-    left: 14px;
-    right: auto;
-    background: rgba(255,248,235,0.88);
-    border-radius: 10px;
-    padding: 5px 12px;
-    font-size: 0.78rem;
-    color: #9a7050;
-    font-weight: 600;
-    z-index: 11;
-    letter-spacing: 0.3px;
-  }
+}
 </style>
 </head>
+
 <body>
 
 <div id="game-wrap">
+<canvas id="game"></canvas>
+<div id="vibe">🌤 Calm Afternoon</div>
 
-  <!-- Game Canvas -->
-  <canvas id="game-canvas" width="800" height="560"></canvas>
-
-  <!-- Corner vibe label -->
-  <div id="vibe">🌤 Calm Afternoon</div>
-
-  <!-- Interact Prompt -->
-  <div id="prompt">Press E</div>
-
-  <!-- Dialogue Box -->
-  <div id="dialogue">
-    <div class="speaker" id="dialogue-speaker">Café</div>
-    <div class="text" id="dialogue-text">Hello!</div>
-    <div class="dismiss">Press E or click to close</div>
+<div id="mobile-controls">
+  <div>
+    <button data-key="w">⬆️</button>
   </div>
-
-  <!-- Intro Overlay -->
-  <div id="intro">
-    <div class="deco">🌸 🏡 🍋</div>
-    <h1>Cozy Town</h1>
-    <p>A quiet little place where nothing urgent ever happens.</p>
-    <div class="hint">
-      <strong>Move</strong> with <kbd>WASD</kbd> or <kbd>Arrow Keys</kbd><br>
-      <strong>Interact</strong> with <kbd>E</kbd> near things<br>
-      Just… wander around and enjoy the calm 🌿
-    </div>
-    <button id="start-btn">Start Exploring →</button>
+  <div>
+    <button data-key="a">⬅️</button>
+    <button data-key="s">⬇️</button>
+    <button data-key="d">➡️</button>
   </div>
+  <button id="interact">E</button>
+</div>
 
-  <!-- Falling petals (decorative) -->
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  COZY TOWN — A tiny relaxing game
-//  Single-file vanilla JS canvas game
-// ═══════════════════════════════════════════════════════
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-const canvas  = document.getElementById('game-canvas');
-const ctx     = canvas.getContext('2d');
-const W = canvas.width;   // 800
-const H = canvas.height;  // 560
-
-// ─── INTRO ───────────────────────────────────────────
-document.getElementById('start-btn').addEventListener('click', () => {
-  const intro = document.getElementById('intro');
-  intro.classList.add('hidden');
-  setTimeout(() => { intro.style.display = 'none'; startGame(); }, 700);
-  spawnPetals();
-  startAmbientMusic();
-});
-
-// ─── AMBIENT MUSIC (Web Audio API) ───────────────────
-let audioCtx;
-function startAmbientMusic() {
-  try {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    // Gentle repeating pentatonic melody
-    const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 392.00, 329.63, 293.66];
-    let t = audioCtx.currentTime + 0.3;
-    const loopBars = () => {
-      notes.forEach((freq, i) => {
-        const osc  = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, t + i * 0.45);
-        gain.gain.setValueAtTime(0, t + i * 0.45);
-        gain.gain.linearRampToValueAtTime(0.055, t + i * 0.45 + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.45 + 0.9);
-        osc.start(t + i * 0.45);
-        osc.stop(t + i * 0.45 + 1.0);
-      });
-      t += notes.length * 0.45 + 0.8;
-      setTimeout(loopBars, (notes.length * 0.45 + 0.8) * 1000 - 300);
-    };
-    loopBars();
-  } catch(e) { /* audio not supported */ }
+function resize() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
 }
-
-function playChime() {
-  if (!audioCtx) return;
-  try {
-    const osc  = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(660, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.12);
-    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.45);
-  } catch(e) {}
-}
-
-// ─── PETALS ──────────────────────────────────────────
-function spawnPetals() {
-  const wrap = document.getElementById('game-wrap');
-  for (let i = 0; i < 8; i++) {
-    const p = document.createElement('div');
-    p.className = 'petal';
-    p.style.left = (Math.random() * 800) + 'px';
-    p.style.animationDuration = (6 + Math.random() * 8) + 's';
-    p.style.animationDelay    = (Math.random() * 10) + 's';
-    p.style.transform = `rotate(${Math.random()*360}deg)`;
-    const hue = Math.random() > 0.5 ? '#f9c7d8' : '#fde8b4';
-    p.style.background = hue;
-    wrap.appendChild(p);
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-//  GAME STATE
-// ═══════════════════════════════════════════════════════
+window.addEventListener("resize", resize);
+resize();
 
 const keys = {};
-window.addEventListener('keydown', e => {
-  keys[e.key] = true;
-  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
-  if (e.key === 'e' || e.key === 'E') handleInteract();
+
+// keyboard
+window.addEventListener("keydown", e => keys[e.key.toLowerCase()] = true);
+window.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
+
+// mobile
+document.querySelectorAll("[data-key]").forEach(btn=>{
+  btn.addEventListener("touchstart", ()=> keys[btn.dataset.key]=true);
+  btn.addEventListener("touchend", ()=> keys[btn.dataset.key]=false);
 });
-window.addEventListener('keyup', e => { keys[e.key] = false; });
-document.getElementById('dialogue').addEventListener('click', closeDialogue);
 
-// ─── MAP TILES (simple colour grid) ──────────────────
-// World is 800×560. We define coloured "zones" procedurally.
+document.getElementById("interact").addEventListener("touchstart", interact);
 
-// ─── BUILDINGS / OBJECTS ─────────────────────────────
-const objects = [
-  {
-    id: 'gaming',
-    label: '🎮 Game Zone',
-    x: 80, y: 80, w: 130, h: 110,
-    interactRadius: 80,
-    dialogue: { speaker: 'Game Zone', text: 'Here you can chill and ride your horse to explore & enjoy Witcher 3, or you can become an android in detroid world. the choice is yours!' },
-    color: '#e8b48a',
-    roofColor: '#c4724a',
-    accent: '#f0d0a8'
-  },
-  {
-    id: 'lemonade',
-    label: '🍋 Lemonade',
-    x: 380, y: 50, w: 90, h: 65,
-    interactRadius: 65,
-    dialogue: { speaker: 'Lemonade Stand', text: 'Your favorite, a cold lemonade with some ice 🍋' },
-    color: '#f5e080',
-    roofColor: '#d4a820',
-    accent: '#fff8c0'
-  },
-  {
-    id: 'cakeshop',
-    label: '🍰 Cake Shop',
-    x: 580, y: 70, w: 120, h: 100,
-    interactRadius: 75,
-    dialogue: { speaker: 'Sweet Bakery', text: 'Your favorite, a sweet piece of cake that makes everything better 🍰' },
-    color: '#f0b8c8',
-    roofColor: '#d07898',
-    accent: '#fde8f0'
-  },
-  {
-    id: 'music',
-    label: '🎶 Music Spot',
-    x: 560, y: 380, w: 100, h: 70,
-    interactRadius: 70,
-    dialogue: { speaker: 'Music Corner', text: 'You sit down and play a soft melody 🎶' },
-    color: '#b8d8f0',
-    roofColor: '#6898c0',
-    accent: '#ddf0ff'
-  },
-];
+// player
+const player = {x:200,y:200,s:3};
 
-// ─── PLAYER ──────────────────────────────────────────
-const player = {
-  x: 390, y: 300,
-  w: 28, h: 34,
-  speed: 0.3,
-  dirX: 1,
-  speed: 2.2,
-  dir: 'down',   // facing direction
-  frame: 0,      // walk animation frame
-  frameTimer: 0,
-  moving: false,
-  bobOffset: 0,  // idle bob
-};
+// npc
+const npc = {x:300,y:200,dir:1};
 
-// ─── CAT NPC ─────────────────────────────────────────
-const cat = {
-  x: 260, y: 340,
-  w: 20, h: 16,
-  dir: 1,
-  timer: 0,
-  moveDur: 90,
-  restDur: 120,
-  resting: false,
-  frame: 0,
-  frameTimer: 0,
-  interactRadius: 55,
-  tailWag: 0,
-  dialogue: { speaker: '🐱 Cat', text: 'The cat looks at you, then walks away like it owns the place 🐱 ( it might be actually the real owner, no one knows )' }
-};
+// game zone
+const gameZone = {x:100,y:100,w:150,h:100};
 
-// ─── NPC (random townsfolk near café) ────────────────
-const npc = {
-  x: 250, y: 165,
-  w: 28, h: 34,
-  speed: 0.3,
-  dirX: 1,
-  dir: 'down',
-  bobTimer: 0,
-  interactRadius: 60,
-  dialogue: { speaker: 'Townsfolk', text: "Hey… your accent is actually pretty good. Way better than Emily in Paris 😄 and whoever tells you anything but this is just jelous" }
-};
-
-// ─── DIALOGUE STATE ───────────────────────────────────
-let dialogueOpen = false;
-let nearObject   = null;
-let globalTimer  = 0;   // used for animations
-
-// ─── PATH TILES (decorative) ─────────────────────────
-// Paths connecting buildings
-const paths = [
-  { x: 60,  y: 175, w: 680, h: 28 },  // horizontal main road
-  { x: 375, y: 60,  w: 28,  h: 500 }, // vertical road
-];
-
-// ─── TREES (decorative) ──────────────────────────────
-const trees = [
-  { x: 50,  y: 260 }, { x: 140, y: 340 }, { x: 50,  y: 420 },
-  { x: 700, y: 200 }, { x: 720, y: 310 }, { x: 680, y: 420 },
-  { x: 200, y: 470 }, { x: 440, y: 460 }, { x: 320, y: 50  },
-  { x: 500, y: 240 }, { x: 130, y: 240 }, { x: 760, y: 470 },
-];
-
-// ─── FLOWERS ─────────────────────────────────────────
-const flowers = [];
-for (let i = 0; i < 28; i++) {
-  flowers.push({
-    x: 30 + Math.random() * 740,
-    y: 30 + Math.random() * 500,
-    col: ['#f9c7d8','#fde48a','#c8f0c0','#b8d8f0','#f0c8f8'][Math.floor(Math.random()*5)],
-    r: Math.random() * Math.PI * 2
-  });
+function interact(){
+  alert("Here you can chill and ride your horse to explore & enjoy Witcher 3, or you can become an android in detroid world. the choice is yours!");
 }
 
-// ─── FENCE ───────────────────────────────────────────
-const fences = [
-  { x: 30, y: 230, w: 110, h: 6 },
-  { x: 30, y: 230, w: 6, h: 60  },
-  { x: 30, y: 290, w: 6, h: 60  },
-  { x: 36, y: 290, w: 104, h: 6 },
-];
+function update(){
+  if(keys["w"]) player.y -= player.s;
+  if(keys["s"]) player.y += player.s;
+  if(keys["a"]) player.x -= player.s;
+  if(keys["d"]) player.x += player.s;
 
-// ═══════════════════════════════════════════════════════
-//  DRAWING HELPERS
-// ═══════════════════════════════════════════════════════
+  npc.x += npc.dir * 1;
+  if(npc.x > 350 || npc.x < 250) npc.dir *= -1;
+}
 
-function roundRect(x, y, w, h, r) {
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // game zone
+  ctx.fillStyle="#5a6bd8";
+  ctx.fillRect(gameZone.x,gameZone.y,gameZone.w,gameZone.h);
+  ctx.fillStyle="#fff";
+  ctx.fillText("GAME ZONE", gameZone.x+20, gameZone.y-10);
+
+  // npc
+  ctx.fillStyle="red";
   ctx.beginPath();
-  ctx.moveTo(x+r, y);
-  ctx.lineTo(x+w-r, y);
-  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-  ctx.lineTo(x+w, y+h-r);
-  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-  ctx.lineTo(x+r, y+h);
-  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-  ctx.lineTo(x, y+r);
-  ctx.quadraticCurveTo(x, y, x+r, y);
-  ctx.closePath();
-}
-
-// ─── DRAW GROUND ────────────────────────────────────
-function drawGround() {
-  // Grass base
-  ctx.fillStyle = '#b6d888';
-  ctx.fillRect(0, 0, W, H);
-
-  // Subtle grass texture patches
-  ctx.fillStyle = '#a8cc7c';
-  for (let gx = 0; gx < W; gx += 40) {
-    for (let gy = 0; gy < H; gy += 40) {
-      if ((gx + gy) % 80 === 0) ctx.fillRect(gx, gy, 40, 40);
-    }
-  }
-
-  // Paths
-  paths.forEach(p => {
-    ctx.fillStyle = '#e0cfa0';
-    roundRect(p.x, p.y, p.w, p.h, 4);
-    ctx.fill();
-    ctx.fillStyle = '#d4bb88';
-    ctx.fillRect(p.x, p.y + p.h/2 - 1, p.w, 2);
-  });
-}
-
-// ─── DRAW FLOWERS ────────────────────────────────────
-function drawFlowers() {
-  flowers.forEach((f, i) => {
-    const wobble = Math.sin(globalTimer * 0.04 + i) * 1.5;
-    ctx.save();
-    ctx.translate(f.x, f.y + wobble * 0.3);
-    // stem
-    ctx.strokeStyle = '#78a848';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(0, 3); ctx.lineTo(0, 9); ctx.stroke();
-    // petals
-    for (let p = 0; p < 5; p++) {
-      ctx.save();
-      ctx.rotate(f.r + p * Math.PI * 2/5 + globalTimer * 0.01);
-      ctx.fillStyle = f.col;
-      ctx.beginPath();
-      ctx.ellipse(0, -4, 2.5, 4, 0, 0, Math.PI*2);
-      ctx.fill();
-      ctx.restore();
-    }
-    // center
-    ctx.fillStyle = '#f8e040';
-    ctx.beginPath(); ctx.arc(0, 0, 2.5, 0, Math.PI*2); ctx.fill();
-    ctx.restore();
-  });
-}
-
-// ─── DRAW TREES ──────────────────────────────────────
-function drawTree(x, y, idx) {
-  const sway = Math.sin(globalTimer * 0.025 + idx * 1.3) * 1.2;
-  // Shadow
-  ctx.fillStyle = 'rgba(60,80,30,0.13)';
-  ctx.beginPath();
-  ctx.ellipse(x+9, y+52, 14, 6, 0, 0, Math.PI*2);
-  ctx.fill();
-  // Trunk
-  ctx.fillStyle = '#9a7040';
-  ctx.fillRect(x+5, y+38, 8, 16);
-  // Canopy layers
-  const colors = ['#6aac40','#7cc048','#58941a'];
-  [0,1,2].forEach((layer, l) => {
-    ctx.save();
-    ctx.translate(x + 9 + sway * (l+1) * 0.3, 0);
-    ctx.fillStyle = colors[l];
-    ctx.beginPath();
-    ctx.arc(0, y + 28 - l * 10, 16 - l * 2, 0, Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-  });
-}
-
-// ─── DRAW FENCES ─────────────────────────────────────
-function drawFences() {
-  fences.forEach(f => {
-    ctx.fillStyle = '#d4b880';
-    roundRect(f.x, f.y, f.w, f.h, 2);
-    ctx.fill();
-    ctx.strokeStyle = '#b89858';
-    ctx.lineWidth = 0.8;
-    ctx.stroke();
-    // posts
-    if (f.w > f.h) {
-      for (let px = f.x; px <= f.x + f.w; px += 18) {
-        ctx.fillStyle = '#c4a870';
-        ctx.fillRect(px, f.y-4, 5, f.h+8);
-      }
-    }
-  });
-}
-
-// ─── DRAW BUILDING ───────────────────────────────────
-function drawBuilding(obj) {
-  const { x, y, w, h, color, roofColor, accent, label, id } = obj;
-
-  // Shadow
-  ctx.fillStyle = 'rgba(80,50,20,0.12)';
-  ctx.beginPath();
-  ctx.ellipse(x + w/2, y + h + 8, w/2, 8, 0, 0, Math.PI*2);
+  ctx.arc(npc.x,npc.y,15,0,Math.PI*2);
   ctx.fill();
 
-  // Wall
-  ctx.fillStyle = color;
-  roundRect(x, y, w, h, 8);
+  // player (blonde)
+  ctx.fillStyle="#f4d03f";
+  ctx.beginPath();
+  ctx.arc(player.x,player.y,12,0,Math.PI*2);
   ctx.fill();
-  ctx.strokeStyle = roofColor;
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  // Roof (triangle)
-  ctx.fillStyle = roofColor;
-  ctx.beginPath();
-  ctx.moveTo(x - 8, y + 6);
-  ctx.lineTo(x + w/2, y - h * 0.35);
-  ctx.lineTo(x + w + 8, y + 6);
-  ctx.closePath();
-  ctx.fill();
-
-  // Door
-  ctx.fillStyle = accent;
-  const dw = w * 0.22, dh = h * 0.38;
-  const dx = x + w/2 - dw/2, dy = y + h - dh;
-  roundRect(dx, dy, dw, dh, 4);
-  ctx.fill();
-  ctx.strokeStyle = roofColor;
-  ctx.lineWidth = 1;
-  ctx.stroke();
-  // Door knob
-  ctx.fillStyle = roofColor;
-  ctx.beginPath();
-  ctx.arc(dx + dw - 4, dy + dh/2, 2, 0, Math.PI*2);
-  ctx.fill();
-
-  // Windows
-  const winsX = [x + w*0.12, x + w*0.62];
-  winsX.forEach(wx => {
-    if (wx + w*0.25 < x + w) {
-      const wy = y + h * 0.2, ww = w * 0.22, wh = h * 0.26;
-      ctx.fillStyle = '#fffff0';
-      roundRect(wx, wy, ww, wh, 3);
-      ctx.fill();
-      ctx.strokeStyle = roofColor;
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      // window shine
-      ctx.fillStyle = 'rgba(255,255,255,0.6)';
-      ctx.fillRect(wx+2, wy+2, ww*0.35, wh*0.4);
-    }
-  });
-
-  // Special decorations per building
-  if (id === 'cafe') {
-    // Awning
-    ctx.fillStyle = '#d46040';
-    ctx.beginPath();
-    ctx.moveTo(x-4, y+8); ctx.lineTo(x+w+4, y+8);
-    ctx.lineTo(x+w, y+18); ctx.lineTo(x, y+18);
-    ctx.closePath(); ctx.fill();
-    // Stripes
-    ctx.strokeStyle = '#f08060';
-    ctx.lineWidth = 3;
-    for (let sx = 0; sx < 7; sx++) {
-      const px = x + sx * (w+8)/6 - 4;
-      ctx.beginPath(); ctx.moveTo(px, y+8); ctx.lineTo(px-4, y+18); ctx.stroke();
-    }
-    // Sign
-    ctx.fillStyle = '#fff8e8';
-    roundRect(x+w*0.2, y+h*0.04, w*0.6, 14, 4);
-    ctx.fill();
-    ctx.fillStyle = '#7a4828';
-    ctx.font = 'bold 9px Nunito, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('CAFÉ', x+w/2, y+h*0.04+10);
-  }
-
-  if (id === 'lemonade') {
-    // Stand umbrella
-    ctx.fillStyle = '#f8d840';
-    ctx.beginPath();
-    ctx.arc(x + w/2, y - 8, w/2 + 4, Math.PI, 0);
-    ctx.closePath(); ctx.fill();
-    ctx.strokeStyle = '#c8a810'; ctx.lineWidth = 1; ctx.stroke();
-    // Counter front
-    ctx.fillStyle = '#e8c860';
-    ctx.fillRect(x-6, y+h-14, w+12, 14);
-    // Jug
-    ctx.fillStyle = '#ffffa0';
-    ctx.beginPath(); ctx.arc(x+w/2, y+h-20, 8, 0, Math.PI*2); ctx.fill();
-    ctx.strokeStyle='#c8a810'; ctx.lineWidth=1; ctx.stroke();
-  }
-
-  if (id === 'cakeshop') {
-    // Display window (big)
-    ctx.fillStyle = '#fff8f0';
-    roundRect(x+8, y+h*0.15, w-16, h*0.32, 4);
-    ctx.fill();
-    ctx.strokeStyle = roofColor; ctx.lineWidth=1; ctx.stroke();
-    // Fake cakes
-    [[x+w*0.22, y+h*0.32],[x+w*0.55, y+h*0.3]].forEach(([cx,cy]) => {
-      ctx.fillStyle='#f8c0d0'; ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle='#e880a0'; ctx.fillRect(cx-6, cy-3, 12, 4);
-    });
-  }
-
-  if (id === 'music') {
-    // Bench
-    ctx.fillStyle = '#c4a060';
-    ctx.fillRect(x+8, y+h-20, w-16, 6);
-    ctx.fillRect(x+10, y+h-20, 5, 10);
-    ctx.fillRect(x+w-15, y+h-20, 5, 10);
-    // Music notes floating
-    const noteY = Math.sin(globalTimer * 0.05) * 4;
-    ctx.fillStyle = '#6888c8';
-    ctx.font = '11px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('♪', x+w/2-8, y+h*0.4+noteY);
-    ctx.fillText('♫', x+w/2+8, y+h*0.25-noteY);
-  }
-
-  // Label
-  ctx.fillStyle = 'rgba(80,50,20,0.75)';
-  ctx.font = 'bold 10px Nunito, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(label, x + w/2, y - h * 0.35 - 6);
 }
 
-// ─── DRAW CAT ────────────────────────────────────────
-function drawCat() {
-  const { x, y, tailWag } = cat;
-  ctx.save();
-  ctx.translate(x, y);
-
-  // Shadow
-  ctx.fillStyle = 'rgba(50,30,10,0.1)';
-  ctx.beginPath(); ctx.ellipse(10, 18, 10, 4, 0, 0, Math.PI*2); ctx.fill();
-
-  // Body
-  ctx.fillStyle = '#f0c890';
-  ctx.beginPath(); ctx.ellipse(10, 10, 9, 7, 0, 0, Math.PI*2); ctx.fill();
-
-  // Head
-  ctx.beginPath(); ctx.ellipse(17, 5, 7, 6, 0.3, 0, Math.PI*2); ctx.fill();
-
-  // Ears
-  ctx.fillStyle = '#e0a870';
-  ctx.beginPath();
-  ctx.moveTo(13, 0); ctx.lineTo(11, -5); ctx.lineTo(16, -1); ctx.closePath(); ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(20, -1); ctx.lineTo(22, -6); ctx.lineTo(24, 0); ctx.closePath(); ctx.fill();
-
-  // Face
-  ctx.fillStyle = '#503020';
-  ctx.beginPath(); ctx.arc(15, 5, 1.2, 0, Math.PI*2); ctx.fill(); // left eye
-  ctx.beginPath(); ctx.arc(19, 5, 1.2, 0, Math.PI*2); ctx.fill(); // right eye
-  // Nose
-  ctx.fillStyle = '#f07080';
-  ctx.beginPath(); ctx.arc(17, 7.5, 1, 0, Math.PI*2); ctx.fill();
-  // Whiskers
-  ctx.strokeStyle = 'rgba(80,50,20,0.4)';
-  ctx.lineWidth = 0.8;
-  [[11,7,4,6],[11,7.5,4,7.5],[11,8,4,9]].forEach(([x1,y1,x2,y2])=>{
-    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
-  });
-  [[23,7,26,6],[23,7.5,26,7.5],[23,8,26,9]].forEach(([x1,y1,x2,y2])=>{
-    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
-  });
-
-  // Tail
-  const tw = Math.sin(tailWag * 0.1) * 15;
-  ctx.strokeStyle = '#f0c890';
-  ctx.lineWidth = 3;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(2, 12);
-  ctx.quadraticCurveTo(-8, 4 + tw, -4, -4 + tw);
-  ctx.stroke();
-
-  // Paws
-  ctx.fillStyle = '#e8b880';
-  [4,10,14].forEach(px => {
-    ctx.beginPath(); ctx.ellipse(px, 16, 3, 2, 0, 0, Math.PI*2); ctx.fill();
-  });
-
-  ctx.restore();
+function loop(){
+  update();
+  draw();
+  requestAnimationFrame(loop);
 }
 
-// ─── DRAW NPC ────────────────────────────────────────
-function drawNPC() {
-  const bob = Math.sin(npc.bobTimer * 0.05) * 1.5;
-  ctx.save();
-  ctx.translate(npc.x, npc.y + bob);
-
-  // Shadow
-  ctx.fillStyle = 'rgba(50,30,10,0.12)';
-  ctx.beginPath(); ctx.ellipse(0, 28, 9, 3, 0, 0, Math.PI*2); ctx.fill();
-
-  // Body (dress/shirt)
-  ctx.fillStyle = '#a8c8f0';
-  roundRect(-8, 8, 16, 18, 4);
-  ctx.fill();
-
-  // Head
-  ctx.fillStyle = '#f5d0a8';
-  ctx.beginPath(); ctx.arc(0, 3, 8, 0, Math.PI*2); ctx.fill();
-
-  // Hair
-  ctx.fillStyle = '#c87840';
-  ctx.beginPath();
-  ctx.arc(0, -1, 8, Math.PI, 0); ctx.fill();
-  ctx.beginPath();
-  ctx.arc(-4, 5, 4, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath();
-  ctx.arc(4, 5, 4, 0, Math.PI*2); ctx.fill();
-
-  // Eyes
-  ctx.fillStyle = '#503020';
-  ctx.beginPath(); ctx.arc(-2.5, 3, 1.2, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(2.5, 3, 1.2, 0, Math.PI*2); ctx.fill();
-
-  // Smile
-  ctx.strokeStyle = '#7a4828';
-  ctx.lineWidth = 1.2;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.arc(0, 5.5, 3, 0.2, Math.PI - 0.2); ctx.stroke();
-
-  // Arms
-  ctx.strokeStyle = '#a8c8f0';
-  ctx.lineWidth = 4;
-  ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(-8, 13); ctx.lineTo(-14, 22); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(8, 13); ctx.lineTo(14, 22); ctx.stroke();
-
-  // Legs
-  ctx.strokeStyle = '#e8d0b8';
-  ctx.lineWidth = 4;
-  ctx.beginPath(); ctx.moveTo(-3, 26); ctx.lineTo(-4, 36); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(3, 26); ctx.lineTo(4, 36); ctx.stroke();
-
-  ctx.restore();
-}
-
-// ─── DRAW PLAYER ─────────────────────────────────────
-function drawPlayer() {
-  const bob = player.moving ? Math.sin(player.frame * 0.6) * 2 : Math.sin(globalTimer * 0.04) * 1;
-  const lean = player.moving ? Math.sin(player.frame * 0.6) * 3 : 0;
-  ctx.save();
-  ctx.translate(player.x, player.y + bob);
-
-  // Shadow
-  ctx.fillStyle = 'rgba(50,30,10,0.15)';
-  ctx.beginPath(); ctx.ellipse(0, 28, 10, 4, 0, 0, Math.PI*2); ctx.fill();
-
-  // Body
-  ctx.save();
-  ctx.rotate(lean * Math.PI / 180);
-
-  // Shirt
-  ctx.fillStyle = '#9cd8a8';
-  roundRect(-8, 7, 16, 18, 4);
-  ctx.fill();
-
-  // Head
-  ctx.fillStyle = '#f5d0a8';
-  ctx.beginPath(); ctx.arc(0, 2, 8.5, 0, Math.PI*2); ctx.fill();
-
-  // Hair
-  ctx.fillStyle = '#f4d03f';
-  ctx.beginPath(); ctx.arc(0, -2, 8.5, Math.PI*1.05, Math.PI*2 - 0.05); ctx.fill();
-  ctx.beginPath(); ctx.arc(-5, 3, 4, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(5, 3, 4, 0, Math.PI*2); ctx.fill();
-
-  // Eyes (based on direction)
-  ctx.fillStyle = '#503020';
-  if (player.dir === 'down') {
-    ctx.beginPath(); ctx.arc(-2.5, 3, 1.3, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(2.5, 3, 1.3, 0, Math.PI*2); ctx.fill();
-  } else if (player.dir === 'up') {
-    // no eyes visible
-  } else {
-    ctx.beginPath(); ctx.arc(player.dir==='right'? 2: -2, 3, 1.3, 0, Math.PI*2); ctx.fill();
-  }
-
-  // Legs (walk frames)
-  ctx.strokeStyle = '#7a5038';
-  ctx.lineWidth = 4;
-  ctx.lineCap = 'round';
-  const legSwing = player.moving ? Math.sin(player.frame * 0.6) * 6 : 0;
-  ctx.beginPath(); ctx.moveTo(-3, 25); ctx.lineTo(-3 - legSwing, 36); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(3, 25); ctx.lineTo(3 + legSwing, 36); ctx.stroke();
-
-  // Arms
-  ctx.strokeStyle = '#9cd8a8';
-  ctx.lineWidth = 4;
-  const armSwing = player.moving ? Math.sin(player.frame * 0.6) * 8 : 0;
-  ctx.beginPath(); ctx.moveTo(-8, 12); ctx.lineTo(-14 + armSwing, 22); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(8, 12); ctx.lineTo(14 - armSwing, 22); ctx.stroke();
-
-  ctx.restore();
-  ctx.restore();
-}
-
-// ─── DRAW INTERACT HINT ──────────────────────────────
-function updatePrompt() {
-  const prompt = document.getElementById('prompt');
-  if (nearObject && !dialogueOpen) {
-    const cx = nearObject.x !== undefined ? nearObject.x : cat.x;
-    const cy = nearObject.y !== undefined ? nearObject.y : cat.y;
-    // Position above the object
-    const objCx = (nearObject.w ? nearObject.x + nearObject.w/2 : nearObject.x + 10);
-    prompt.style.left = (objCx - 28) + 'px';
-    prompt.style.top  = (nearObject.y - 24) + 'px';
-    prompt.classList.add('visible');
-  } else {
-    prompt.classList.remove('visible');
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-//  INTERACTION LOGIC
-// ═══════════════════════════════════════════════════════
-
-function getNearest() {
-  const px = player.x, py = player.y;
-  let best = null, bestDist = 999;
-
-  // Check buildings
-  objects.forEach(obj => {
-    const cx = obj.x + obj.w/2, cy = obj.y + obj.h/2;
-    const d = Math.hypot(px - cx, py - cy);
-    if (d < obj.interactRadius && d < bestDist) { bestDist = d; best = obj; }
-  });
-
-  // Check cat
-  const cd = Math.hypot(px - (cat.x+10), py - (cat.y+8));
-  if (cd < cat.interactRadius && cd < bestDist) { bestDist = cd; best = cat; }
-
-  // Check NPC
-  const nd = Math.hypot(px - npc.x, py - npc.y);
-  if (nd < npc.interactRadius && nd < bestDist) { bestDist = nd; best = npc; }
-
-  return best;
-}
-
-function handleInteract() {
-  if (dialogueOpen) { closeDialogue(); return; }
-  if (!nearObject) return;
-  openDialogue(nearObject.dialogue.speaker, nearObject.dialogue.text);
-}
-
-function openDialogue(speaker, text) {
-  document.getElementById('dialogue-speaker').textContent = speaker;
-  document.getElementById('dialogue-text').textContent    = text;
-  document.getElementById('dialogue').classList.add('visible');
-  dialogueOpen = true;
-  playChime();
-}
-
-function closeDialogue() {
-  document.getElementById('dialogue').classList.remove('visible');
-  dialogueOpen = false;
-}
-
-// ═══════════════════════════════════════════════════════
-//  UPDATE LOGIC
-// ═══════════════════════════════════════════════════════
-
-function updatePlayer() {
-  if (dialogueOpen) { player.moving = false; return; }
-
-  const left  = keys['ArrowLeft']  || keys['a'] || keys['A'];
-  const right = keys['ArrowRight'] || keys['d'] || keys['D'];
-  const up    = keys['ArrowUp']    || keys['w'] || keys['W'];
-  const down  = keys['ArrowDown']  || keys['s'] || keys['S'];
-
-  let dx = 0, dy = 0;
-  if (left)  { dx -= 1; player.dir = 'left'; }
-  if (right) { dx += 1; player.dir = 'right'; }
-  if (up)    { dy -= 1; player.dir = 'up'; }
-  if (down)  { dy += 1; player.dir = 'down'; }
-
-  // Normalize diagonal
-  if (dx !== 0 && dy !== 0) { dx *= 0.707; dy *= 0.707; }
-
-  player.moving = dx !== 0 || dy !== 0;
-
-  if (player.moving) {
-    player.frameTimer++;
-    if (player.frameTimer > 4) { player.frame++; player.frameTimer = 0; }
-    player.x += dx * player.speed;
-    player.y += dy * player.speed;
-    // Clamp to canvas
-    player.x = Math.max(12, Math.min(W - 12, player.x));
-    player.y = Math.max(14, Math.min(H - 18, player.y));
-  }
-}
-
-function updateCat() {
-  cat.tailWag = globalTimer;
-  cat.frameTimer++;
-
-  if (cat.resting) {
-    cat.timer++;
-    if (cat.timer > cat.restDur) { cat.resting = false; cat.timer = 0; cat.moveDur = 60 + Math.random()*80; }
-  } else {
-    cat.x += cat.dir * 0.55;
-    cat.timer++;
-    if (cat.x > 360 || cat.x < 140) cat.dir *= -1;
-    if (cat.timer > cat.moveDur) { cat.resting = true; cat.timer = 0; cat.restDur = 80 + Math.random()*100; }
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-//  MAIN RENDER LOOP
-// ═══════════════════════════════════════════════════════
-
-function render() {
-  ctx.clearRect(0, 0, W, H);
-
-  // Ground
-  drawGround();
-
-  // Fences
-  drawFences();
-
-  // Flowers
-  drawFlowers();
-
-  // Trees (back layer)
-  trees.forEach((t, i) => drawTree(t.x, t.y, i));
-
-  // Buildings
-  objects.forEach(obj => drawBuilding(obj));
-
-  // NPC
-  npc.bobTimer++;
-  npc.x += npc.dirX * npc.speed;
-  if (npc.x > 320 || npc.x < 200) npc.dirX *= -1;
-  drawNPC();
-
-  // Cat
-  updateCat();
-  drawCat();
-
-  // Player (always on top of ground objects)
-  updatePlayer();
-  drawPlayer();
-
-  // Interaction detection
-  nearObject = getNearest();
-  updatePrompt();
-
-  globalTimer++;
-}
-
-// ─── GAME LOOP ────────────────────────────────────────
-function startGame() {
-  function loop() {
-    render();
-    requestAnimationFrame(loop);
-  }
-  loop();
-}
+loop();
 </script>
+
 </body>
 </html>
