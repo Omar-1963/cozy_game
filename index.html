@@ -39,7 +39,7 @@
   }
 
   /* ─────────────────────────────────────────
-     GAME CANVAS WRAPPER (Now Responsive)
+     GAME CANVAS WRAPPER (Responsive)
   ───────────────────────────────────────── */
   #game-wrap {
     position: relative;
@@ -49,7 +49,6 @@
     border-radius: 18px;
     overflow: hidden;
     box-shadow: 0 8px 48px rgba(0,0,0,0.55), 0 0 0 3px #c8a870;
-    background: #b6d888;
   }
 
   #game-canvas {
@@ -60,60 +59,58 @@
   }
 
   /* ─────────────────────────────────────────
-     MOBILE OVERLAYS
+     MANUAL BUTTON CONTROLS (Visible on PC & Mobile)
   ───────────────────────────────────────── */
-  .mobile-ctrl {
+  .on-screen-ctrl {
     position: absolute;
     bottom: 20px;
     left: 20px;
     display: grid;
-    grid-template-columns: repeat(3, 50px);
-    grid-template-rows: repeat(2, 50px);
-    gap: 8px;
+    grid-template-columns: repeat(3, 55px);
+    grid-template-rows: repeat(2, 55px);
+    gap: 10px;
     z-index: 25;
-    pointer-events: none;
   }
 
-  .mobile-btn {
-    width: 50px;
-    height: 50px;
+  .ctrl-btn {
+    width: 55px;
+    height: 55px;
     background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
     border: 2px solid rgba(255, 255, 255, 0.4);
-    border-radius: 12px;
+    border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.2rem;
-    pointer-events: auto;
+    font-size: 1.4rem;
+    cursor: pointer;
     user-select: none;
+    transition: transform 0.1s;
   }
-  
-  .mobile-btn:active { background: rgba(255, 255, 255, 0.4); }
+  .ctrl-btn:active { background: rgba(255, 255, 255, 0.4); transform: scale(0.95); }
 
-  #btn-interact {
+  #btn-e {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 70px;
-    height: 70px;
-    background: rgba(245, 166, 35, 0.5);
+    bottom: 25px;
+    right: 25px;
+    width: 80px;
+    height: 80px;
+    background: rgba(245, 166, 35, 0.4);
+    backdrop-filter: blur(8px);
     border: 3px solid white;
     border-radius: 50%;
     color: white;
     font-weight: 800;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+    cursor: pointer;
     z-index: 25;
-    pointer-events: auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    user-select: none;
   }
-
-  @media (min-width: 1025px) {
-    .mobile-ctrl, #btn-interact { display: none; }
-  }
+  #btn-e:active { background: rgba(245, 166, 35, 0.7); transform: scale(0.9); }
 
   /* ─────────────────────────────────────────
      INTRO OVERLAY
@@ -129,42 +126,63 @@
     gap: 18px;
     z-index: 30;
     transition: opacity 0.7s ease;
-    padding: 20px;
   }
   #intro.hidden { opacity: 0; pointer-events: none; }
 
   #intro h1 {
-    font-size: 2.2rem;
+    font-size: 2.6rem;
     font-weight: 800;
     color: #7a5c38;
-    text-align: center;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 0 #f5c98a;
   }
   #intro p {
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: #9a7a58;
     text-align: center;
+    line-height: 1.7;
     max-width: 380px;
   }
+  #intro .hint {
+    background: #fff8ee;
+    border: 1.5px solid #e8c88a;
+    border-radius: 12px;
+    padding: 12px 22px;
+    font-size: 0.93rem;
+    color: #8c6a44;
+    text-align: center;
+    line-height: 1.65;
+  }
   #intro button {
+    margin-top: 6px;
     background: linear-gradient(135deg, #f5a84a, #e8853a);
     color: #fff;
     border: none;
     border-radius: 30px;
     padding: 13px 38px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem;
     font-weight: 700;
     cursor: pointer;
+    box-shadow: 0 4px 16px rgba(230,120,50,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
   }
+  #intro button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(230,120,50,0.45);
+  }
+  #intro .deco { font-size: 2.2rem; letter-spacing: 8px; }
 
   /* ─────────────────────────────────────────
      DIALOGUE BOX
   ───────────────────────────────────────── */
   #dialogue {
     position: absolute;
-    bottom: 100px;
+    bottom: 120px;
     left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 560px;
+    transform: translateX(-50%) translateY(12px);
+    width: 560px;
+    max-width: 90%;
     background: var(--dialogue-bg);
     border: 2px solid var(--dialogue-border);
     border-radius: 16px;
@@ -173,10 +191,36 @@
     z-index: 20;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.25s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease;
   }
-  #dialogue.visible { opacity: 1; pointer-events: auto; }
+  #dialogue.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+  #dialogue .speaker {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #c4854a;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 5px;
+  }
+  #dialogue .text {
+    font-size: 1.02rem;
+    color: #5a4030;
+    line-height: 1.55;
+  }
+  #dialogue .dismiss {
+    font-size: 0.75rem;
+    color: #b89070;
+    margin-top: 8px;
+    text-align: right;
+  }
 
+  /* ─────────────────────────────────────────
+     INTERACT PROMPT
+  ───────────────────────────────────────── */
   #prompt {
     position: absolute;
     background: rgba(255,248,235,0.92);
@@ -188,27 +232,21 @@
     color: #7a5830;
     pointer-events: none;
     opacity: 0;
+    transition: opacity 0.2s;
     z-index: 12;
     white-space: nowrap;
   }
   #prompt.visible { opacity: 1; }
 
-  #vibe {
-    position: absolute;
-    bottom: 12px;
-    left: 14px;
-    background: rgba(255,248,235,0.88);
-    border-radius: 10px;
-    padding: 5px 12px;
-    font-size: 0.78rem;
-    color: #9a7050;
-    z-index: 11;
-  }
-
+  /* ─────────────────────────────────────────
+     AMBIENT PARTICLES (CSS only)
+  ───────────────────────────────────────── */
   .petal {
     position: absolute;
-    width: 7px; height: 7px;
+    width: 7px;
+    height: 7px;
     border-radius: 50% 0 50% 0;
+    background: #f9c7d8;
     opacity: 0;
     pointer-events: none;
     animation: petalFall linear infinite;
@@ -220,33 +258,59 @@
     90%  { opacity:0.4; }
     100% { opacity:0; transform: translateY(570px) rotate(360deg) translateX(40px); }
   }
+
+  /* ─────────────────────────────────────────
+     CORNER CLOCK / VIBE
+  ───────────────────────────────────────── */
+  #vibe {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    right: auto;
+    background: rgba(255,248,235,0.88);
+    border-radius: 10px;
+    padding: 5px 12px;
+    font-size: 0.78rem;
+    color: #9a7050;
+    font-weight: 600;
+    z-index: 11;
+    letter-spacing: 0.3px;
+  }
 </style>
 </head>
 <body>
 
 <div id="game-wrap">
+
   <canvas id="game-canvas" width="800" height="560"></canvas>
+
+  <div class="on-screen-ctrl">
+    <div class="ctrl-btn" style="grid-column: 2;" id="btn-up">▲</div>
+    <div class="ctrl-btn" style="grid-column: 1; grid-row: 2;" id="btn-left">◀</div>
+    <div class="ctrl-btn" style="grid-column: 2; grid-row: 2;" id="btn-down">▼</div>
+    <div class="ctrl-btn" style="grid-column: 3; grid-row: 2;" id="btn-right">▶</div>
+  </div>
+  <div id="btn-e">E</div>
+
   <div id="vibe">🌤 Calm Afternoon</div>
+
   <div id="prompt">Press E</div>
 
-  <div class="mobile-ctrl">
-    <div class="mobile-btn" style="grid-column: 2;" id="m-up">▲</div>
-    <div class="mobile-btn" style="grid-column: 1; grid-row: 2;" id="m-left">◀</div>
-    <div class="mobile-btn" style="grid-column: 2; grid-row: 2;" id="m-down">▼</div>
-    <div class="mobile-btn" style="grid-column: 3; grid-row: 2;" id="m-right">▶</div>
-  </div>
-  <div id="btn-interact">E</div>
-
   <div id="dialogue">
-    <div class="speaker" id="dialogue-speaker" style="font-weight:700; color:#c4854a; margin-bottom:5px;"></div>
-    <div class="text" id="dialogue-text"></div>
-    <div class="dismiss" style="font-size:0.75rem; color:#b89070; margin-top:8px; text-align:right;">Tap to close</div>
+    <div class="speaker" id="dialogue-speaker">Café</div>
+    <div class="text" id="dialogue-text">Hello!</div>
+    <div class="dismiss">Press E or click to close</div>
   </div>
 
   <div id="intro">
-    <div style="font-size: 2.2rem; letter-spacing: 8px;">🌸 🏡 🍋</div>
+    <div class="deco">🌸 🏡 🍋</div>
     <h1>Cozy Town</h1>
     <p>A quiet little place where nothing urgent ever happens.</p>
+    <div class="hint">
+      <strong>Move</strong> with <kbd>WASD</kbd> or <kbd>Arrow Keys</kbd><br>
+      <strong>Interact</strong> with <kbd>E</kbd> near things<br>
+      Just… wander around and enjoy the calm 🌿
+    </div>
     <button id="start-btn">Start Exploring →</button>
   </div>
 </div>
@@ -254,10 +318,19 @@
 <script>
 const canvas  = document.getElementById('game-canvas');
 const ctx     = canvas.getContext('2d');
-const W = 800;
-const H = 560;
+const W = canvas.width;
+const H = canvas.height;
 
-// ─── MUSIC & PETALS (Original Logic) ──────────────────
+// ─── INTRO ───────────────────────────────────────────
+document.getElementById('start-btn').addEventListener('click', () => {
+  const intro = document.getElementById('intro');
+  intro.classList.add('hidden');
+  setTimeout(() => { intro.style.display = 'none'; startGame(); }, 700);
+  spawnPetals();
+  startAmbientMusic();
+});
+
+// ─── AMBIENT MUSIC (Web Audio API) ───────────────────
 let audioCtx;
 function startAmbientMusic() {
   try {
@@ -274,28 +347,32 @@ function startAmbientMusic() {
         gain.gain.setValueAtTime(0, t + i * 0.45);
         gain.gain.linearRampToValueAtTime(0.055, t + i * 0.45 + 0.05);
         gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.45 + 0.9);
-        osc.start(t + i * 0.45); osc.stop(t + i * 0.45 + 1.0);
+        osc.start(t + i * 0.45);
+        osc.stop(t + i * 0.45 + 1.0);
       });
       t += notes.length * 0.45 + 0.8;
       setTimeout(loopBars, (notes.length * 0.45 + 0.8) * 1000 - 300);
     };
     loopBars();
-  } catch(e) {}
+  } catch(e) { }
 }
 
 function playChime() {
   if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain); gain.connect(audioCtx.destination);
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(660, audioCtx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.12);
-  gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-  osc.start(); osc.stop(audioCtx.currentTime + 0.45);
+  try {
+    const osc  = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(660, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.12);
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.45);
+  } catch(e) {}
 }
 
+// ─── PETALS ──────────────────────────────────────────
 function spawnPetals() {
   const wrap = document.getElementById('game-wrap');
   for (let i = 0; i < 8; i++) {
@@ -304,36 +381,45 @@ function spawnPetals() {
     p.style.left = (Math.random() * 800) + 'px';
     p.style.animationDuration = (6 + Math.random() * 8) + 's';
     p.style.animationDelay    = (Math.random() * 10) + 's';
+    p.style.transform = `rotate(${Math.random()*360}deg)`;
     const hue = Math.random() > 0.5 ? '#f9c7d8' : '#fde8b4';
     p.style.background = hue;
     wrap.appendChild(p);
   }
 }
 
-// ─── GAME STATE & INPUT ─────────────────────────────
+// ═══════════════════════════════════════════════════════
+//  GAME STATE & INPUT
+// ═══════════════════════════════════════════════════════
+
 const keys = {};
-window.addEventListener('keydown', e => { 
-  keys[e.key.toLowerCase()] = true; 
-  if (e.key.toLowerCase() === 'e') handleInteract(); 
+window.addEventListener('keydown', e => {
+  keys[e.key] = true;
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
+  if (e.key === 'e' || e.key === 'E') handleInteract();
 });
-window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+window.addEventListener('keyup', e => { keys[e.key] = false; });
 
-// Mobile Input Binding
-function bindMobile(id, key) {
-  const el = document.getElementById(id);
-  const start = (e) => { e.preventDefault(); keys[key] = true; };
-  const end = (e) => { e.preventDefault(); keys[key] = false; };
-  el.addEventListener('touchstart', start);
-  el.addEventListener('touchend', end);
-  el.addEventListener('mousedown', start);
-  el.addEventListener('mouseup', end);
+// --- BUTTON LOGIC ---
+function bindBtn(id, key) {
+  const btn = document.getElementById(id);
+  const press = (e) => { e.preventDefault(); keys[key] = true; };
+  const release = (e) => { e.preventDefault(); keys[key] = false; };
+  btn.addEventListener('mousedown', press);
+  btn.addEventListener('mouseup', release);
+  btn.addEventListener('touchstart', press);
+  btn.addEventListener('touchend', release);
 }
-bindMobile('m-up', 'w'); bindMobile('m-down', 's');
-bindMobile('m-left', 'a'); bindMobile('m-right', 'd');
-document.getElementById('btn-interact').addEventListener('touchstart', (e) => { e.preventDefault(); handleInteract(); });
-document.getElementById('btn-interact').addEventListener('click', handleInteract);
+bindBtn('btn-up', 'w');
+bindBtn('btn-down', 's');
+bindBtn('btn-left', 'a');
+bindBtn('btn-right', 'd');
+document.getElementById('btn-e').addEventListener('click', handleInteract);
+document.getElementById('btn-e').addEventListener('touchstart', (e) => { e.preventDefault(); handleInteract(); });
 
-// ─── WORLD DATA (Original Buildings/Trees/NPCs) ─────
+document.getElementById('dialogue').addEventListener('click', closeDialogue);
+
+// ─── OBJECTS ─────────────────────────────
 const objects = [
   { id: 'gaming', label: '🎮 Game Zone', x: 80, y: 80, w: 130, h: 110, interactRadius: 80, dialogue: { speaker: 'Game Zone', text: 'Here you can chill and ride your horse to explore & enjoy Witcher 3, or you can become an android in detroid world. the choice is yours!' }, color: '#e8b48a', roofColor: '#c4724a', accent: '#f0d0a8' },
   { id: 'lemonade', label: '🍋 Lemonade', x: 380, y: 50, w: 90, h: 65, interactRadius: 65, dialogue: { speaker: 'Lemonade Stand', text: 'Your favorite, a cold lemonade with some ice 🍋' }, color: '#f5e080', roofColor: '#d4a820', accent: '#fff8c0' },
@@ -341,39 +427,92 @@ const objects = [
   { id: 'music', label: '🎶 Music Spot', x: 560, y: 380, w: 100, h: 70, interactRadius: 70, dialogue: { speaker: 'Music Corner', text: 'You sit down and play a soft melody 🎶' }, color: '#b8d8f0', roofColor: '#6898c0', accent: '#ddf0ff' },
 ];
 
-const player = { x: 390, y: 300, speed: 2.2, dir: 'down', frame: 0, frameTimer: 0, moving: false };
+const player = { x: 390, y: 300, w: 28, h: 34, speed: 2.2, dir: 'down', frame: 0, frameTimer: 0, moving: false };
 const cat = { x: 260, y: 340, dir: 1, timer: 0, moveDur: 90, restDur: 120, resting: false, interactRadius: 55, tailWag: 0, dialogue: { speaker: '🐱 Cat', text: 'The cat looks at you, then walks away like it owns the place 🐱 ( it might be actually the real owner, no one knows )' } };
-const npc = { x: 250, y: 165, speed: 0.3, dirX: 1, bobTimer: 0, interactRadius: 60, dialogue: { speaker: 'Townsfolk', text: "Hey… your accent is actually pretty good. Way better than Emily in Paris 😄" } };
+const npc = { x: 250, y: 165, speed: 0.3, dirX: 1, bobTimer: 0, interactRadius: 60, dialogue: { speaker: 'Townsfolk', text: "Hey… your accent is actually pretty good. Way better than Emily in Paris 😄 and whoever tells you anything but this is just jelous" } };
 
+let dialogueOpen = false;
+let nearObject   = null;
+let globalTimer  = 0;
+
+const paths = [ { x: 60,  y: 175, w: 680, h: 28 }, { x: 375, y: 60,  w: 28,  h: 500 } ];
 const trees = [{x:50,y:260},{x:140,y:340},{x:50,y:420},{x:700,y:200},{x:720,y:310},{x:680,y:420},{x:200,y:470},{x:440,y:460},{x:320,y:50},{x:500,y:240},{x:130,y:240},{x:760,y:470}];
 const flowers = [];
-for(let i=0; i<28; i++) flowers.push({ x: 30+Math.random()*740, y: 30+Math.random()*500, col: ['#f9c7d8','#fde48a','#c8f0c0','#b8d8f0','#f0c8f8'][Math.floor(Math.random()*5)], r: Math.random()*Math.PI*2 });
+for (let i = 0; i < 28; i++) {
+  flowers.push({ x: 30 + Math.random() * 740, y: 30 + Math.random() * 500, col: ['#f9c7d8','#fde48a','#c8f0c0','#b8d8f0','#f0c8f8'][Math.floor(Math.random()*5)], r: Math.random() * Math.PI * 2 });
+}
+const fences = [ { x: 30, y: 230, w: 110, h: 6 }, { x: 30, y: 230, w: 6, h: 60  }, { x: 30, y: 290, w: 6, h: 60  }, { x: 36, y: 290, w: 104, h: 6 } ];
 
-// ─── RENDER HELPERS ─────────────────────────────────
+// ─── DRAWING HELPERS ─────────────────────────────────
 function roundRect(x, y, w, h, r) {
-  ctx.beginPath(); ctx.moveTo(x+r, y); ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y, x+w, y+r); ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h); ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x, y+h, x, y+h-r); ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y); ctx.closePath();
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.closePath();
+}
+
+function drawGround() {
+  ctx.fillStyle = '#b6d888'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#a8cc7c';
+  for (let gx = 0; gx < W; gx += 40) { for (let gy = 0; gy < H; gy += 40) { if ((gx + gy) % 80 === 0) ctx.fillRect(gx, gy, 40, 40); } }
+  paths.forEach(p => { ctx.fillStyle = '#e0cfa0'; roundRect(p.x, p.y, p.w, p.h, 4); ctx.fill(); ctx.fillStyle = '#d4bb88'; ctx.fillRect(p.x, p.y + p.h/2 - 1, p.w, 2); });
+}
+
+function drawFlowers() {
+  flowers.forEach((f, i) => {
+    const wobble = Math.sin(globalTimer * 0.04 + i) * 1.5;
+    ctx.save(); ctx.translate(f.x, f.y + wobble * 0.3);
+    ctx.strokeStyle = '#78a848'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(0, 3); ctx.lineTo(0, 9); ctx.stroke();
+    for (let p = 0; p < 5; p++) {
+      ctx.save(); ctx.rotate(f.r + p * Math.PI * 2/5 + globalTimer * 0.01);
+      ctx.fillStyle = f.col; ctx.beginPath(); ctx.ellipse(0, -4, 2.5, 4, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
+    }
+    ctx.fillStyle = '#f8e040'; ctx.beginPath(); ctx.arc(0, 0, 2.5, 0, Math.PI*2); ctx.fill(); ctx.restore();
+  });
 }
 
 function drawTree(x, y, idx) {
   const sway = Math.sin(globalTimer * 0.025 + idx * 1.3) * 1.2;
-  ctx.fillStyle = 'rgba(60,80,30,0.13)';
-  ctx.beginPath(); ctx.ellipse(x+9, y+52, 14, 6, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(60,80,30,0.13)'; ctx.beginPath(); ctx.ellipse(x+9, y+52, 14, 6, 0, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#9a7040'; ctx.fillRect(x+5, y+38, 8, 16);
   const colors = ['#6aac40','#7cc048','#58941a'];
   [0,1,2].forEach((layer, l) => {
-    ctx.save(); ctx.translate(x + 9 + sway * (l+1) * 0.3, 0); ctx.fillStyle = colors[l];
-    ctx.beginPath(); ctx.arc(0, y + 28 - l * 10, 16 - l * 2, 0, Math.PI*2); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.translate(x + 9 + sway * (l+1) * 0.3, 0); ctx.fillStyle = colors[l]; ctx.beginPath(); ctx.arc(0, y + 28 - l * 10, 16 - l * 2, 0, Math.PI*2); ctx.fill(); ctx.restore();
+  });
+}
+
+function drawFences() {
+  fences.forEach(f => {
+    ctx.fillStyle = '#d4b880'; roundRect(f.x, f.y, f.w, f.h, 2); ctx.fill();
+    ctx.strokeStyle = '#b89858'; ctx.lineWidth = 0.8; ctx.stroke();
+    if (f.w > f.h) { for (let px = f.x; px <= f.x + f.w; px += 18) { ctx.fillStyle = '#c4a870'; ctx.fillRect(px, f.y-4, 5, f.h+8); } }
   });
 }
 
 function drawBuilding(obj) {
   const { x, y, w, h, color, roofColor, accent, label, id } = obj;
-  ctx.fillStyle = 'rgba(80,50,20,0.12)';
-  ctx.beginPath(); ctx.ellipse(x+w/2, y+h+8, w/2, 8, 0, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = color; roundRect(x, y, w, h, 8); ctx.fill();
+  ctx.fillStyle = 'rgba(80,50,20,0.12)'; ctx.beginPath(); ctx.ellipse(x+w/2, y+h+8, w/2, 8, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = color; roundRect(x, y, w, h, 8); ctx.fill(); ctx.strokeStyle = roofColor; ctx.lineWidth = 1.5; ctx.stroke();
   ctx.fillStyle = roofColor; ctx.beginPath(); ctx.moveTo(x-8, y+6); ctx.lineTo(x+w/2, y-h*0.35); ctx.lineTo(x+w+8, y+6); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = accent; roundRect(x+w/2-w*0.11, y+h-h*0.38, w*0.22, h*0.38, 4); ctx.fill();
+  ctx.fillStyle = accent; roundRect(x+w/2-w*0.11, y+h-h*0.38, w*0.22, h*0.38, 4); ctx.fill(); ctx.strokeStyle = roofColor; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = roofColor; ctx.beginPath(); ctx.arc(x+w/2+w*0.11-4, y+h-h*0.19, 2, 0, Math.PI*2); ctx.fill();
+  [x + w*0.12, x + w*0.62].forEach(wx => { if (wx + w*0.25 < x + w) { ctx.fillStyle = '#fffff0'; roundRect(wx, y+h*0.2, w*0.22, h*0.26, 3); ctx.fill(); ctx.strokeStyle = roofColor; ctx.stroke(); } });
   ctx.fillStyle = 'rgba(80,50,20,0.75)'; ctx.font = 'bold 10px Nunito'; ctx.textAlign = 'center'; ctx.fillText(label, x+w/2, y-h*0.35-6);
+}
+
+function drawCat() {
+  const { x, y, tailWag } = cat; ctx.save(); ctx.translate(x, y);
+  ctx.fillStyle = 'rgba(50,30,10,0.1)'; ctx.beginPath(); ctx.ellipse(10, 18, 10, 4, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#f0c890'; ctx.beginPath(); ctx.ellipse(10, 10, 9, 7, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(17, 5, 7, 6, 0.3, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#503020'; ctx.beginPath(); ctx.arc(15, 5, 1.2, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(19, 5, 1.2, 0, Math.PI*2); ctx.fill();
+  const tw = Math.sin(tailWag * 0.1) * 15; ctx.strokeStyle = '#f0c890'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(2, 12); ctx.quadraticCurveTo(-8, 4+tw, -4, -4+tw); ctx.stroke(); ctx.restore();
+}
+
+function drawNPC() {
+  const bob = Math.sin(npc.bobTimer * 0.05) * 1.5; ctx.save(); ctx.translate(npc.x, npc.y + bob);
+  ctx.fillStyle = 'rgba(50,30,10,0.12)'; ctx.beginPath(); ctx.ellipse(0, 28, 9, 3, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#a8c8f0'; roundRect(-8, 8, 16, 18, 4); ctx.fill();
+  ctx.fillStyle = '#f5d0a8'; ctx.beginPath(); ctx.arc(0, 3, 8, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#c87840'; ctx.beginPath(); ctx.arc(0, -1, 8, Math.PI, 0); ctx.fill(); ctx.restore();
 }
 
 function drawPlayer() {
@@ -386,96 +525,49 @@ function drawPlayer() {
   ctx.restore();
 }
 
-// ─── GAME LOOP ───────────────────────────────────────
-let dialogueOpen = false;
-let nearObject = null;
-let globalTimer = 0;
+// ─── LOGIC ───────────────────────────────────────────
+function handleInteract() { if (dialogueOpen) { closeDialogue(); return; } if (!nearObject) return; openDialogue(nearObject.dialogue.speaker, nearObject.dialogue.text); }
+function openDialogue(speaker, text) { document.getElementById('dialogue-speaker').textContent = speaker; document.getElementById('dialogue-text').textContent = text; document.getElementById('dialogue').classList.add('visible'); dialogueOpen = true; playChime(); }
+function closeDialogue() { document.getElementById('dialogue').classList.remove('visible'); dialogueOpen = false; }
 
-function handleInteract() {
-  if (dialogueOpen) { closeDialogue(); return; }
-  if (!nearObject) return;
-  openDialogue(nearObject.dialogue.speaker, nearObject.dialogue.text);
-}
-
-function openDialogue(speaker, text) {
-  document.getElementById('dialogue-speaker').textContent = speaker;
-  document.getElementById('dialogue-text').textContent = text;
-  document.getElementById('dialogue').classList.add('visible');
-  dialogueOpen = true; playChime();
-}
-
-function closeDialogue() {
-  document.getElementById('dialogue').classList.remove('visible');
-  dialogueOpen = false;
-}
-
-function update() {
+function updatePlayer() {
   if (dialogueOpen) { player.moving = false; return; }
   let dx = 0, dy = 0;
-  if (keys['w'] || keys['arrowup']) dy -= 1;
-  if (keys['s'] || keys['arrowdown']) dy += 1;
-  if (keys['a'] || keys['arrowleft']) dx -= 1;
-  if (keys['d'] || keys['arrowright']) dx += 1;
-  
-  if (dx !== 0 || dy !== 0) {
-    player.moving = true; player.frameTimer++;
-    if(player.frameTimer > 4){ player.frame++; player.frameTimer=0; }
-    const mag = Math.sqrt(dx*dx + dy*dy);
-    player.x += (dx/mag) * player.speed;
-    player.y += (dy/mag) * player.speed;
-  } else { player.moving = false; }
-
-  // Cat/NPC movement
-  npc.x += npc.dirX * npc.speed; if (npc.x > 320 || npc.x < 200) npc.dirX *= -1;
-  
-  // Interaction check
-  nearObject = null;
-  const dist = (x1,y1,x2,y2) => Math.hypot(x1-x2, y1-y2);
-  objects.forEach(o => { if(dist(player.x, player.y, o.x+o.w/2, o.y+o.h/2) < o.interactRadius) nearObject = o; });
-  if(dist(player.x, player.y, cat.x+10, cat.y+8) < cat.interactRadius) nearObject = cat;
-  if(dist(player.x, player.y, npc.x, npc.y) < npc.interactRadius) nearObject = npc;
+  if (keys['ArrowLeft'] || keys['a'] || keys['A']) dx -= 1;
+  if (keys['ArrowRight'] || keys['d'] || keys['D']) dx += 1;
+  if (keys['ArrowUp'] || keys['w'] || keys['W']) dy -= 1;
+  if (keys['ArrowDown'] || keys['s'] || keys['S']) dy += 1;
+  if (dx !== 0 && dy !== 0) { dx *= 0.707; dy *= 0.707; }
+  player.moving = dx !== 0 || dy !== 0;
+  if (player.moving) { player.frameTimer++; if (player.frameTimer > 4) { player.frame++; player.frameTimer = 0; } player.x += dx * player.speed; player.y += dy * player.speed; player.x = Math.max(12, Math.min(W-12, player.x)); player.y = Math.max(14, Math.min(H-18, player.y)); }
 }
 
 function render() {
-  ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = '#b6d888'; ctx.fillRect(0,0,W,H);
+  ctx.clearRect(0, 0, W, H); drawGround(); drawFences(); drawFlowers();
+  trees.forEach((t, i) => drawTree(t.x, t.y, i)); objects.forEach(o => drawBuilding(o));
+  npc.bobTimer++; npc.x += npc.dirX * npc.speed; if (npc.x > 320 || npc.x < 200) npc.dirX *= -1;
+  drawNPC(); cat.tailWag = globalTimer; cat.frameTimer++;
+  if (cat.resting) { cat.timer++; if (cat.timer > cat.restDur) { cat.resting = false; cat.timer = 0; cat.moveDur = 60+Math.random()*80; } }
+  else { cat.x += cat.dir * 0.55; cat.timer++; if (cat.x > 360 || cat.x < 140) cat.dir *= -1; if (cat.timer > cat.moveDur) { cat.resting = true; cat.timer = 0; cat.restDur = 80+Math.random()*100; } }
+  drawCat(); updatePlayer(); drawPlayer();
   
-  flowers.forEach((f, i) => {
-    const wobble = Math.sin(globalTimer * 0.04 + i) * 1.5;
-    ctx.fillStyle = f.col; ctx.beginPath(); ctx.arc(f.x, f.y+wobble, 3, 0, Math.PI*2); ctx.fill();
-  });
-
-  trees.forEach((t, i) => drawTree(t.x, t.y, i));
-  objects.forEach(o => drawBuilding(o));
+  nearObject = null;
+  objects.forEach(o => { if (Math.hypot(player.x-(o.x+o.w/2), player.y-(o.y+o.h/2)) < o.interactRadius) nearObject = o; });
+  if (Math.hypot(player.x-(cat.x+10), player.y-(cat.y+8)) < cat.interactRadius) nearObject = cat;
+  if (Math.hypot(player.x-npc.x, player.y-npc.y) < npc.interactRadius) nearObject = npc;
   
-  // NPC
-  ctx.fillStyle = '#a8c8f0'; roundRect(npc.x-8, npc.y+8+Math.sin(globalTimer*0.05)*1.5, 16, 18, 4); ctx.fill();
-  
-  drawPlayer();
-
-  // Prompt logic
-  const p = document.getElementById('prompt');
-  if(nearObject && !dialogueOpen) {
+  const prompt = document.getElementById('prompt');
+  if (nearObject && !dialogueOpen) {
     const rect = canvas.getBoundingClientRect();
-    const scale = rect.width / W;
-    const ox = (nearObject.w ? nearObject.x + nearObject.w/2 : nearObject.x);
-    p.style.left = (ox * scale - 20) + "px";
-    p.style.top = ((nearObject.y || npc.y) * scale - 40) + "px";
-    p.classList.add('visible');
-  } else { p.classList.remove('visible'); }
-
+    const sc = rect.width / W;
+    prompt.style.left = ((nearObject.w ? nearObject.x+nearObject.w/2 : (nearObject.x||cat.x)) * sc - 28) + 'px';
+    prompt.style.top  = ((nearObject.y||cat.y) * sc - 24) + 'px';
+    prompt.classList.add('visible');
+  } else { prompt.classList.remove('visible'); }
   globalTimer++;
 }
 
-function startGame() {
-  document.getElementById('intro').classList.add('hidden');
-  spawnPetals(); startAmbientMusic();
-  const loop = () => { update(); render(); requestAnimationFrame(loop); };
-  loop();
-}
-
-document.getElementById('start-btn').addEventListener('click', startGame);
-document.getElementById('dialogue').addEventListener('click', closeDialogue);
+function startGame() { function loop() { render(); requestAnimationFrame(loop); } loop(); }
 </script>
 </body>
 </html>
